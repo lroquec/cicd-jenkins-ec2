@@ -28,8 +28,8 @@ pipeline {
             steps {
                 script {
                     sh 'docker network create ${NETWORK_NAME} || true'
-                    sh "docker run -d --name myapp --network ${NETWORK_NAME} ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG}"
-                    sh 'docker run -d --name selenium --network ${NETWORK_NAME} -p 4444:4444 ${SELENIUM_IMAGE}'
+                    sh "docker run --rm -d --name myapp --network ${NETWORK_NAME} ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG}"
+                    sh 'docker run --rm -d --name selenium --network ${NETWORK_NAME} -p 4444:4444 ${SELENIUM_IMAGE}'
                 }
             }
         }
