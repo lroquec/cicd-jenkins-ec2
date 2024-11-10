@@ -21,10 +21,35 @@ pipeline {
             steps {
                 sh 'docker build -t ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG} .'
             }
-        }
-        stage('Trivy Scan') {
+
+        stage('Setup Network and Run Containers') {
             steps {
-                sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock ${TRIVY_IMAGE} image ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG}"
+                script {
+                    sh 'docker network create ${NETWORK_NAME} || true'
+                    sh "docker run -d --name myapp --network ${NETWORK_NAME} ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG}"
+                    sh 'docker run -d --name selenium --network ${NETWORK_NAME} -p 4444:4444 ${SELENIUM_IMAGE}'
+                }
+            }
+        }
+
+        stage('End-to-End Testing with Selenium') {
+            steps {
+                script {
+                    sh '''
+                        export SELENIUM_URL="http://selenium:4444/wd/hub"
+                        python3 -m pytest tests/ -s --junitxml=report.xml
+                    '''
+                }
+            }
+        }
+
+        stage('Tear Down Containers') {
+            steps {
+                script {
+                    sh 'docker stop myapp selenium'
+                    sh 'docker rm myapp selenium'
+                    sh 'docker network rm ${NETWORK_NAME} || true'
+                }
             }
         }
 }
