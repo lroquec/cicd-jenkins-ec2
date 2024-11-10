@@ -40,9 +40,13 @@ pipeline {
 
                // Verificar si el contenedor 'selenium' ya está corriendo
                sh '''
-               if [ -z "$(docker ps --filter "name=selenium" --filter "status=running" -q)" ]; then
-                  docker run -d --name selenium --network ${NETWORK_NAME} -p 4444:4444 ${SELENIUM_IMAGE}
-               fi
+                  if [ -z "$(docker ps -a --filter \\"name=selenium\\" -q)" ]; then
+                     docker run -d --name selenium --network ${NETWORK_NAME} -p 4444:4444 ${SELENIUM_IMAGE}
+                  else
+                     if [ -z "$(docker ps --filter \\"name=selenium\\" --filter \\"status=running\\" -q)" ]; then
+                           docker start selenium
+                     fi
+                  fi
                '''
               }
            }
