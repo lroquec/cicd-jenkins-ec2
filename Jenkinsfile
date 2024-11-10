@@ -128,7 +128,7 @@ pipeline {
                     sh """
                     ssh -o StrictHostKeyChecking=no ec2-user@3.94.126.23 \\
                     "docker pull ${DOCKER_USER}/${IMAGE_NAME}:latest && \\
-                    docker ps -a -q --filter "name=myapp" | grep -q . && docker stop myapp && docker rm myapp || true \\
+                    docker ps -a -q --filter "name=myapp" | grep -q . && docker stop myapp && docker rm myapp || true && \\
                     docker run -d --name myapp -p 5000:5000 ${DOCKER_USER}/${IMAGE_NAME}:latest"
                     """
                 }
