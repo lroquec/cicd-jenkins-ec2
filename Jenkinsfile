@@ -21,7 +21,7 @@ pipeline {
             steps {
                 sh 'docker build -t ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG} .'
             }
-
+        }
         stage('Setup Network and Run Containers') {
             steps {
                 script {
