@@ -24,14 +24,23 @@ pipeline {
                 sh 'docker build -t ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG} .'
             }
         }
+
         stage('Setup Network and Run Containers') {
-            steps {
-                script {
-                    sh 'docker network create ${NETWORK_NAME} || true'
-                    sh "docker run --rm -d --name myapp --network ${NETWORK_NAME} ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG}"
-                    sh 'docker run --rm -d --name selenium --network ${NETWORK_NAME} -p 4444:4444 ${SELENIUM_IMAGE}'
-                }
-            }
+           steps {
+              script {
+               // Crear la red de Docker
+               sh 'docker network create ${NETWORK_NAME} || true'
+
+               // Verificar si el contenedor 'myapp' está corriendo y eliminarlo si es necesario
+               sh 'docker ps -a -q --filter "name=myapp" | grep -q . && docker stop myapp && docker rm myapp || true'
+
+               // Correr el contenedor de la aplicación
+               sh "docker run --rm -d --name myapp --network ${NETWORK_NAME} ${IMAGE_NAME}:${UNIQUE_TAG}"
+
+               // Verificar si el contenedor 'selenium' ya está corriendo
+               sh 'docker ps --filter "name=selenium" | grep -q . || docker run --rm -d --name selenium --network ${NETWORK_NAME} -p 4444:4444 ${SELENIUM_IMAGE}'
+              }
+           }
         }
 
         stage('End-to-End Testing with Selenium') {
