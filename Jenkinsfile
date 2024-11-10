@@ -87,7 +87,7 @@ pipeline {
                     // Hacer push de la imagen
                     sh '''
                       docker push ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG}
-                      docker -t ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG} ${DOCKER_USER}/${IMAGE_NAME}:latest
+                      docker tag ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG} ${DOCKER_USER}/${IMAGE_NAME}:latest
                       docker push ${DOCKER_USER}/${IMAGE_NAME}:latest
                     '''
                 }
