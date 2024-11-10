@@ -15,6 +15,7 @@ pipeline {
         stage('SCM checkout') {
             steps{
               git branch: 'main', url: 'https://github.com/lroquec/cicd-jenkins-ec2.git'
+              
             }
         }
         stage('Build Docker Image') {
@@ -36,6 +37,7 @@ pipeline {
             steps {
                 script {
                     sh '''
+                        pip install pytest selenium
                         export SELENIUM_URL="http://selenium:4444/wd/hub"
                         python3 -m pytest tests/ -s --junitxml=report.xml
                     '''
