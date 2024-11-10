@@ -65,16 +65,12 @@ pipeline {
               script {
                // Crear la red de Docker
                sh 'docker network create ${NETWORK_NAME} || true'
-
                // Verificar si el contenedor 'myapp' está corriendo y eliminarlo si es necesario
                sh 'docker ps -a -q --filter "name=myapp" | grep -q . && docker stop myapp && docker rm myapp || true'
-
                // Correr el contenedor de la aplicación
                sh "docker run --rm -d --name myapp --network ${NETWORK_NAME} ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG}"
-
                // Verificar si el contenedor 'selenium' está corriendo y eliminarlo si es necesario
                sh 'docker ps -a -q --filter "name=selenium" | grep -q . && docker stop selenium && docker rm selenium || true'
-
                // Correr el contenedor de Selenium
                sh 'docker run --rm -d --name selenium --network ${NETWORK_NAME} -p 4444:4444 ${SELENIUM_IMAGE}'
 
@@ -87,7 +83,6 @@ pipeline {
              script {
                // Crear un directorio en el host para almacenar el archivo de reporte
                sh 'mkdir -p reports'
-
                // Ejecutar el contenedor con un volumen montado para compartir el archivo
                sh '''
                      docker run --rm --network ${NETWORK_NAME} \
@@ -104,7 +99,6 @@ pipeline {
                  // Detener y eliminar los contenedores solo si están corriendo
                  sh 'docker ps -q --filter "name=myapp" | grep -q . && docker stop myapp || true'
                  sh 'docker ps -q --filter "name=selenium" | grep -q . && docker stop selenium || true'
-
                 // Eliminar la red de Docker
                  sh 'docker network rm ${NETWORK_NAME} || true'
              }
