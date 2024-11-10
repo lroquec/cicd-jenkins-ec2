@@ -17,12 +17,12 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 sshagent(['sshec2']) {
-                    sh '''
+                    sh """
                     ssh -o StrictHostKeyChecking=no ec2-user@3.94.126.23 << 'ENDSSH'
-                    docker pull ${env.DOCKER_USER}/${env.IMAGE_NAME}:latest
-                    docker run -d --name myapp -p 5000:5000 ${env.DOCKER_USER}/${env.IMAGE_NAME}:latest
+                    docker pull ${DOCKER_USER}/${IMAGE_NAME}:latest
+                    docker run -d --name myapp -p 5000:5000 ${DOCKER_USER}/${IMAGE_NAME}:latest
                     ENDSSH
-                    '''
+                    """
                 }
             }
         }
