@@ -18,10 +18,10 @@ pipeline {
             steps {
                 sshagent(['sshec2']) {
                     sh """
-                    ssh -o StrictHostKeyChecking=no ec2-user@3.94.126.23 << 'ENDSSH'
+                    ssh -o StrictHostKeyChecking=no ec2-user@3.94.126.23 'bash -s' <<EOF
                     docker pull ${DOCKER_USER}/${IMAGE_NAME}:latest
                     docker run -d --name myapp -p 5000:5000 ${DOCKER_USER}/${IMAGE_NAME}:latest
-                    ENDSSH
+                    EOF
                     """
                 }
             }
