@@ -6,12 +6,13 @@ pipeline {
             agent {
                 docker {
                     image 'python:3.13.0-alpine3.20'
+                    args '-u root'
                 }
             }
             steps {
                  checkout scm
                  sh '''
-                   pip install --prefix=/home/jenkins/.local flake8 flask flask-wtf
+                   pip install flake8 flask flask-wtf
                    flake8 app.py
                    python3 -m unittest tests/unit_test_app.py 
                  '''
