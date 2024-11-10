@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Trivy Scan') {
             steps {
-                sh "docker run --rm ${TRIVY_IMAGE} image ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG}"
+                sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock ${TRIVY_IMAGE} image ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG}"
             }
         }
 }
