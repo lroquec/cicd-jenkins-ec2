@@ -53,7 +53,7 @@ pipeline {
                sh '''
                      docker run --rm --network ${NETWORK_NAME} \
                      -v $(pwd)/reports:/app/reports -w /app ${TEST_CONTAINER_IMAGE} \
-                     bash -c "pip install pytest selenium && export SELENIUM_URL='http://selenium:4444/wd/hub' && python3 -m pytest tests/ -s --junitxml=reports/report.xml"
+                     sh -c "pip install pytest selenium && export SELENIUM_URL='http://selenium:4444/wd/hub' && python3 -m pytest tests/ -s --junitxml=reports/report.xml"
                '''
              }
           }
