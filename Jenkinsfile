@@ -11,7 +11,7 @@ pipeline {
             steps {
                  checkout scm
                  sh '''
-                   pip install flake8 flask flask-wtf
+                   pip install --prefix=/home/jenkins/.local flake8 flask flask-wtf
                    flake8 app.py
                    python3 -m unittest tests/unit_test_app.py 
                  '''
