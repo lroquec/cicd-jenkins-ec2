@@ -43,18 +43,21 @@ pipeline {
            }
         }
 
-        stage('End-to-End Testing with Selenium') {
-            steps {
-                script {
-                    // Run the test container connected to the same network
-                    sh '''
-                        docker run --rm --network ${NETWORK_NAME} \
-                        -v $(pwd):/app -w /app ${TEST_CONTAINER_IMAGE} \
-                        sh -c "pip install pytest selenium && export SELENIUM_URL='http://selenium:4444/wd/hub' && python3 -m pytest tests/ -s --junitxml=report.xml"
-                    '''
-                }
-            }
-        }
+       stage('End-to-End Testing with Selenium') {
+          steps {
+             script {
+               // Crear un directorio en el host para almacenar el archivo de reporte
+               sh 'mkdir -p reports'
+
+               // Ejecutar el contenedor con un volumen montado para compartir el archivo
+               sh '''
+                     docker run --rm --network ${NETWORK_NAME} \
+                     -v $(pwd)/reports:/app/reports -w /app ${TEST_CONTAINER_IMAGE} \
+                     bash -c "pip install pytest selenium && export SELENIUM_URL='http://selenium:4444/wd/hub' && python3 -m pytest tests/ -s --junitxml=reports/report.xml"
+               '''
+             }
+          }
+       }
 
         stage('Tear Down Containers') {
             steps {
@@ -65,5 +68,13 @@ pipeline {
                 }
             }
         }
+
+    post {
+       always {
+          archiveArtifacts artifacts: 'reports/report.xml', allowEmptyArchive: true
+          junit 'reports/report.xml'
+       }
+    }
+
 }
 }
