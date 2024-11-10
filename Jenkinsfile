@@ -68,13 +68,11 @@ pipeline {
                 }
             }
         }
-
+}
     post {
        always {
           archiveArtifacts artifacts: 'reports/report.xml', allowEmptyArchive: true
           junit 'reports/report.xml'
        }
     }
-
-}
 }
