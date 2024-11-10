@@ -1,6 +1,7 @@
 import socket
 from uuid import getnode as get_mac
 from flask import Flask, jsonify
+from flask_wtf import CSRFProtect
 
 
 # Get device details
@@ -18,6 +19,8 @@ def get_device_details():
 
 
 app = Flask(__name__)
+csrf = CSRFProtect()
+csrf.init_app(app)
 
 
 # Returns device hostname,IP and MAC address
