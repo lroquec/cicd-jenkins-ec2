@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent ubuntu
 
     stages {
         stage('lint and unit test') {
