@@ -59,8 +59,8 @@ pipeline {
         stage('Tear Down Containers') {
             steps {
                 script {
-                    sh 'docker stop myapp selenium'
-                    sh 'docker rm myapp selenium'
+                    sh 'docker stop myapp selenium || true'
+                    sh 'docker rm myapp selenium || true'
                     sh 'docker network rm ${NETWORK_NAME} || true'
                 }
             }
