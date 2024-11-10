@@ -2,7 +2,6 @@ pipeline {
     agent { label 'linux' }
 
     environment {
-        AWS_CREDENTIALS_ID = 'your-aws-credentials-id' // Replace with your Jenkins credentials ID
         IMAGE_NAME = 'cicd-tests'
         DOCKER_USER = 'lroquec'
         UNIQUE_TAG = "${env.BUILD_NUMBER}"
@@ -20,8 +19,8 @@ pipeline {
                 sshagent(['sshec2']) {
                     sh '''
                     ssh -o StrictHostKeyChecking=no ec2-user@3.94.126.23 << 'ENDSSH'
-                    docker pull ${DOCKER_USER}/${IMAGE_NAME}:latest
-                    docker run -d -p 5000:5000 ${DOCKER_USER}/${IMAGE_NAME}:latest
+                    docker pull ${env.DOCKER_USER}/${env.IMAGE_NAME}:latest
+                    docker run -d --name myapp -p 5000:5000 ${env.DOCKER_USER}/${env.IMAGE_NAME}:latest
                     ENDSSH
                     '''
                 }
