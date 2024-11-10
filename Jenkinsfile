@@ -30,7 +30,7 @@ pipeline {
         }
         stage('SCM checkout') {
             steps{
-           git branch: 'main', url: 'https://github.com/lroquec/cicd-jenkins-ec2.git'
+              git branch: 'main', url: 'https://github.com/lroquec/cicd-jenkins-ec2.git'
             }
         }
         stage('sonarqube') {
