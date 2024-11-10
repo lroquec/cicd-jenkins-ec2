@@ -10,6 +10,7 @@ pipeline {
         SELENIUM_IMAGE = 'selenium/standalone-chrome:latest' // Official Selenium image with Chrome
         NETWORK_NAME = 'test-network'
         TEST_CONTAINER_IMAGE = 'python:3.13.0-alpine3.20'
+        DOCKERHUB_CREDENTIALS_ID = 'dockerhub'
     }
 
     stages {
@@ -63,15 +64,36 @@ pipeline {
           }
        }
 
-        stage('Tear Down Containers') {
+       stage('Tear Down Containers') {
+          steps {
+             script {
+                 // Detener y eliminar los contenedores solo si están corriendo
+                 sh 'docker ps -q --filter "name=myapp" | grep -q . && docker stop myapp || true'
+                 sh 'docker ps -q --filter "name=selenium" | grep -q . && docker stop selenium || true'
+
+                // Eliminar la red de Docker
+                 sh 'docker network rm ${NETWORK_NAME} || true'
+             }
+          }
+       }
+
+        stage('Push to Docker Hub') {
             steps {
                 script {
-                    sh 'docker stop myapp selenium || true'
-                    sh 'docker rm myapp selenium || true'
-                    sh 'docker network rm ${NETWORK_NAME} || true'
+                    // Login en Docker Hub
+                    withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    }
+                    // Hacer push de la imagen
+                    sh '''
+                      docker push ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG}
+                      docker push ${DOCKER_USER}/${IMAGE_NAME}:latest
+                    '''
                 }
             }
         }
+    }
+
 }
     post {
        always {
