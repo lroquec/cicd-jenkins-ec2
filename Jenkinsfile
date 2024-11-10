@@ -38,9 +38,11 @@ pipeline {
                sh "docker run --rm -d --name myapp --network ${NETWORK_NAME} ${DOCKER_USER}/${IMAGE_NAME}:${UNIQUE_TAG}"
 
                // Verificar si el contenedor 'selenium' ya está corriendo
+               sh '''
                if [ -z "$(docker ps --filter "name=selenium" --filter "status=running" -q)" ]; then
                   docker run -d --name selenium --network ${NETWORK_NAME} -p 4444:4444 ${SELENIUM_IMAGE}
                fi
+               '''
               }
            }
         }
