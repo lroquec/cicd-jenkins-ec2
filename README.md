@@ -108,11 +108,6 @@ The pipeline performs the following operations:
 6. Configure SonarQube in Jenkins.
 7. Run the pipeline to automate the CI/CD workflow for the Python web application.
 
-## Notes
-- The pipeline assumes a network is needed for communication between `myapp` and Selenium for testing.
-- Adjust environment variables as necessary for your project.
-- Ensure Docker and Docker Compose are installed on all Jenkins agents used for this pipeline.
-
 ## Troubleshooting
 - **Container Issues**: Check if containers are properly stopped and removed in the `Tear Down Containers` stage.
 - **EC2 Deployment**: Ensure EC2 has access to Docker and the appropriate ports are open in the security group. For this you can use the CloudFormation template at 
