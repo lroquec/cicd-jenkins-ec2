@@ -9,6 +9,7 @@ pipeline {
         TRIVY_IMAGE = 'aquasec/trivy:latest'
         SELENIUM_IMAGE = 'selenium/standalone-chrome:latest' // Official Selenium image with Chrome
         NETWORK_NAME = 'test-network'
+        TEST_CONTAINER_IMAGE = 'python:3.13.0-alpine3.20'
     }
 
     stages {
@@ -36,10 +37,11 @@ pipeline {
         stage('End-to-End Testing with Selenium') {
             steps {
                 script {
+                    // Run the test container connected to the same network
                     sh '''
-                        pip install pytest selenium
-                        export SELENIUM_URL="http://selenium:4444/wd/hub"
-                        python3 -m pytest tests/ -s --junitxml=report.xml
+                        docker run --rm --network ${NETWORK_NAME} \
+                        -v $(pwd):/app -w /app ${TEST_CONTAINER_IMAGE} \
+                        bash -c "pip install pytest selenium && export SELENIUM_URL='http://selenium:4444/wd/hub' && python3 -m pytest tests/ -s --junitxml=report.xml"
                     '''
                 }
             }
